@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CS493 Cloud Computing - HW1 GAE</title>
+      <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>CS493 Cloud Computing - HW1 GAE</h1>
+
+<h2>Last 10 visits</h2>
+{% for time in times %}
+    <p>{{time['timestamp']}}</p>
+{% endfor %}
+</body>
+</html>

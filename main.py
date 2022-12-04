@@ -237,7 +237,7 @@ def add_new_user(user_info):
 def index():
     return render_template("index.html",
                            session=session.get("user"),
-                           pretty=json.dumps(session.get("user")["token"], indent=4))
+                           pretty=json.dumps(session.get("user"), indent=4))
 
 @app.route("/callback", methods=["GET", "POST"])
 def callback():
@@ -315,8 +315,8 @@ def users_get():
         url_root = request.url_root
         query = client.query(kind=constants.users)
         if 'application/json' not in request.accept_mimetypes:
-            error = {"Error": "Unsupported Media Type"}
-            return Response(json.dumps(error), status=415, mimetype='application/json')
+            error = {"Error": "Not Acceptable"}
+            return Response(json.dumps(error), status=406, mimetype='application/json')
         data = {}
         args = request.args
         offset = int(args.get('offset', 0))
@@ -357,8 +357,8 @@ def shoppers_get():
         payload = verify_jwt(request)
         add_user_filter(query, payload) # verify this successfully filters the results
     if 'application/json' not in request.accept_mimetypes:
-        error = {"Error": "Unsupported Media Type"}
-        return Response(json.dumps(error), status=415, mimetype='application/json')
+        error = {"Error": "Not Acceptable"}
+        return Response(json.dumps(error), status=406, mimetype='application/json')
     data = {}
     args = request.args
     offset = int(args.get('offset', 0))
@@ -417,8 +417,8 @@ def shopper_get(id):
     if 'application/json' in request.accept_mimetypes:
         return Response(json.dumps(shopper), status=200, mimetype='application/json')
     else:
-        error = {"Error": "Unsupported Media Type"}
-        return Response(json.dumps(error), status=415, mimetype='application/json')
+        error = {"Error": "Not Acceptable"}
+        return Response(json.dumps(error), status=406, mimetype='application/json')
 
 @app.route('/shoppers', methods = ['POST'])
 def shopper_post():
@@ -515,7 +515,7 @@ def shopper_put(id):
             "status": content["status"],
             "cost_threshold": float(content["cost_threshold"]),
             "quantity": int(content["quantity"]),
-            "products": None,
+            "products": shopper["products"],
             "user": payload["sub"]
         }
     )
@@ -604,6 +604,11 @@ def shopper_delete(id):
     client.delete(shopper_key)
     return "", 204
 
+@app.route('/shoppers', methods = ['DELETE'])
+def shoppers_delete_all():
+    error = {"Error": "Method Not Allowed"}
+    return Response(json.dumps(error), status=405, mimetype='application/json')
+
 # Product - Operations
 @app.route('/products', methods = ['GET'])
 def products_get():
@@ -613,8 +618,10 @@ def products_get():
     if valid_token:
         payload = verify_jwt(request)
         add_user_filter(query, payload) # verify this successfully filters the results
+    # Accept Check
     if 'application/json' not in request.accept_mimetypes:
-        return 'Unsupported Media Type', 415
+        error = {"Error": "Not Acceptable"}
+        return Response(json.dumps(error), status=406, mimetype='application/json')
     data = {}
     args = request.args
     offset = int(args.get('offset', 0))
@@ -674,7 +681,8 @@ def product_get(id):
     if 'application/json' in request.accept_mimetypes:
         return Response(json.dumps(product, default=str), status=200, mimetype='application/json')
     else:
-        return 'Unsupported Media Type', 415
+        error = {"Error": "Not Acceptable"}
+        return Response(json.dumps(error), status=406, mimetype='application/json')
 
 @app.route('/products', methods = ['POST'])
 def product_post():
@@ -714,7 +722,6 @@ def product_post():
         new_product["self"] = url_root + 'products/' + str(new_product.key.id)
         new_product["id"] = new_product.key.id
         return Response(json.dumps(new_product, default=str), status=201, mimetype='application/json')
-
 
 @app.route('/products/<id>', methods=['PUT'])
 def product_put(id):
@@ -850,6 +857,11 @@ def product_delete(id):
         return Response(json.dumps(error), status=404, mimetype='application/json')
     client.delete(product_key)
     return "", 204
+
+@app.route('/products', methods = ['DELETE'])
+def products_delete_all():
+    error = {"Error": "Method Not Allowed"}
+    return Response(json.dumps(error), status=405, mimetype='application/json')
 
 # Relationship Operations
 # Shopper and Product Relationship Endpoints

@@ -2,17 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CS493 Cloud Computing - HW1 GAE</title>
-      <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>Online Shopper - REST Api</title>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
+<h1>Online Shopper Application</h1>
 
-<h1>CS493 Cloud Computing - HW1 GAE</h1>
+    {% if session %}
+        <h1>Welcome {{session.token.userinfo.name}}!</h1>
+        <p>Your users unique Id: <strong>{{session.uuid}}</strong></p>
+        <p><a href="/logout">Logout</a></p>
+        <div style="text-align: left"><pre>{{pretty}}</pre></div>
+    {% else %}
+        <h1>Welcome Guest</h1>
 
-<h2>Last 10 visits</h2>
-{% for time in times %}
-    <p>{{time['timestamp']}}</p>
-{% endfor %}
+<div class="row">
+    <div class="column"></div>
+    <div class="column"></div>
+    <div class="column"></div>
+    <div class="column"><p style="text-align: left"><a href="/login">Login</a> </p> </div>
+    <div class="column"><p style="text-align: right"><a href="/register">Register</a></p></div>
+    <div class="column"></div>
+    <div class="column"></div>
+    <div class="column"></div>
+</div>
+
+
+    {% endif %}
+
 </body>
 </html>
+

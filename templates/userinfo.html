@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CS493 Cloud Computing - HW1 GAE</title>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<h3>Hello, {{data['given_name']}}</h3>
+<div style="text-align: left">
+<ul>
+    <li>Your given name is {{data['given_name']}}</li>
+    <li>Your family name is {{data['family_name']}}</li>
+    <li>The value of state is {{data['state']}}</li>
+</ul>
+</div>
+
+</body>
+</html>
